@@ -1,0 +1,12 @@
+{
+  "_id" : 4,
+  "Username" : "Emily",
+  "UserType" : "Lurker",
+  "PersonalInfo" : {
+    "Name" : "Emily",
+    "Age" : "26",
+    "Address" : "California",
+    "Password" : "1234"
+  },
+  "RecommendedApps" : [249181,249180,223597,223593,223595,223592]
+}

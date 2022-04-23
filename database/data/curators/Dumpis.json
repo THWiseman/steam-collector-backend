@@ -1,0 +1,18 @@
+{
+  "_id" : 2,
+  "UserName" : "Dumpis",
+  "SteamId" : 76561197997019906,
+  "UserType" : "Curator",
+  "FollowedCurators" : [76561197978497049],
+  "Followers" : [76561197978497049],
+  "CreatedCollections" : [],
+  "SavedCollections" : [1],
+  "PersonalInfo" : {
+    "Name" : "Tucker",
+    "Age" : "30",
+    "Address" : "Alaska",
+    "Password" : "1234"
+  },
+  "RecommendedApps" : [220,221,222],
+  "OwnedApps" : [544,521,300,220]
+}

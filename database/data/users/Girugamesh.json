@@ -1,0 +1,15 @@
+{
+  "_id" : 3,
+  "UserName" : "Girugamesh",
+  "SteamId" : 76561197998426184,
+  "FollowedCurators" : [],
+  "SavedCollections" : [],
+  "PersonalInfo" : {
+    "Name" : "James",
+    "Age" : "28",
+    "Address" : "Utah",
+    "Password" : "1234"
+  },
+  "RecommendedApps" : [323180],
+  "OwnedApps" : [323180,220]
+}
