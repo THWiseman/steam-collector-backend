@@ -5,6 +5,7 @@ export const PersonalInfoSchema = new Schema ( {
         Name: String,
         Age: Number,
         Address: String,
+        Email: String,
         Password: String
     }
 )

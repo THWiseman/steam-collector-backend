@@ -30,22 +30,21 @@ const steamController = (app) => {
    app.get('/api/steam/getAppsByName/:appSearchString', (req,res) => {
       getAppsByName(req,res);
    });
-   app.get('/api/steamcollector/getAllUsers', (req,res) => {
-      getAllUsers(req,res);
-   })
 };
 
 
 const getUserInfo = async (req,res) => {
    const steamId = req.params.steamId;
-   const responseFromSteam = await(axios.get(STEAM_URL + USERS + "GetPlayerSummaries/v002/" + KEY_SUFFIX + "steamids=" + steamId));
-   const responseFromDb = await(userDao.findUserBySteamId(parseInt(steamId)));
-   const response = {
-      "steam" : responseFromSteam.data.response,
-      "db" : responseFromDb
+   if(steamId){
+      const responseFromSteam = await(axios.get(STEAM_URL + USERS + "GetPlayerSummaries/v002/" + KEY_SUFFIX + "steamids=" + steamId));
+      const responseFromDb = await(userDao.findUserBySteamId(parseInt(steamId)));
+      const response = {
+         "steam" : responseFromSteam.data.response,
+         "db" : responseFromDb
+      }
+      console.log(response);
+      res.send(response);
    }
-   console.log(response);
-   res.send(response);
 }
 
 const getOwnedGames = async(req,res) => {
@@ -69,11 +68,6 @@ const getAppsByName = async(req,res) => {
       return obj.name.toLowerCase().includes(name.toLowerCase());
    })
    res.send(filteredApps);
-}
-
-const getAllUsers = async(req,res) => {
- const response = await(userDao.findAllUsers());
- res.send(response);
 }
 
 export default steamController;

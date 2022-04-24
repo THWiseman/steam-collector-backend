@@ -1,16 +1,16 @@
 {
-  "_id" : 1,
   "UserName" : "CustomizedHobo",
   "SteamId" : 76561197978497049,
   "UserType" : "Curator",
-  "FollowedCurators" : [76561197978497049],
-  "Followers" : [2,3,4],
-  "CreatedCollections" : [1],
+  "FollowedCurators" : [],
+  "Followers" : [],
+  "CreatedCollections" : [],
   "SavedCollections" : [],
   "PersonalInfo" : {
     "Name" : "Tom",
     "Age" : "30",
     "Address" : "Boston",
+    "Email" : "tom@hobolicio.us",
     "Password" : "1234"
   },
   "RecommendedApps" : [705100,703600,686351,220],
