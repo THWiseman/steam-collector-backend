@@ -30,6 +30,9 @@ const steamController = (app) => {
    app.get('/api/steam/getAppsByName/:appSearchString', (req,res) => {
       getAppsByName(req,res);
    });
+   app.get('/api/steam/getAppInfo/:appId', (req,res) => {
+      getAppInfo(req,res);
+   })
 };
 
 
@@ -68,6 +71,49 @@ const getAppsByName = async(req,res) => {
       return obj.name.toLowerCase().includes(name.toLowerCase());
    })
    res.send(filteredApps);
+}
+
+const getAppInfo = async(req,res) => {
+
+   //Parse App ID from URL
+   const appId = req.params.appId;
+
+   //Check if in database already.
+   const responseFromDb = await(appDao.findAppByAppId(appId));
+
+   //If it is, send it to the caller and return.
+   if(responseFromDb){
+      try {
+         res.send(responseFromDb);
+         return;
+      } catch (e) {
+         console.log("Error getting game data from database.");
+      }
+   }
+
+   //If It's not, create a default object, populate it with some data from steam, store a copy in our db, and send a copy to the caller.
+   let response = {
+      "AppId" : appId,
+      "AppCollections" : [],
+      "OwnedBy" : [],
+      "RecommendedBy" : [],
+      "AnonymousRecommendations" : 0,
+      "AppTitle" : "",
+      "Price" : "",
+   }
+   const responseFromSteam = await(axios.get("https://store.steampowered.com/api/appdetails?appids=" + appId));
+   console.log(responseFromSteam.data[appId]["data"]["name"]);
+   if(responseFromSteam){
+      try{
+         response.AppTitle = responseFromSteam.data[appId]["data"]["name"];
+         response.Price = responseFromSteam.data[appId]["data"]["price_overview"]["final_formatted"];
+      } catch (e) {
+         console.log("Error getting game data from steam");
+      }
+   }
+
+   response = await appDao.createApp(response);
+   res.send(response);
 }
 
 export default steamController;

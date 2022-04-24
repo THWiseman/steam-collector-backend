@@ -6,6 +6,8 @@ export const AppSchema = new Schema ({
     AppCollections : {type: [Number]},
     OwnedBy : {type: [Number]},
     RecommendedBy : {type: [Number]},
-    AnonymousRecommendations: {type: Number}
+    AnonymousRecommendations: {type: Number},
+    AppTitle : {type: String},
+    Price : {type : String}
     }, {collection : 'apps'}
 )

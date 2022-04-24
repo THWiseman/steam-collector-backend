@@ -33,38 +33,51 @@ const userController = (app) => {
 }
 
 const getUserById = async (req,res) => {
-    const userId = req.params.id;
-    console.log(userId);
-    const response = await(userDao.findUserById(userId));
-    console.log(response);
-    res.send(response);
+    try{
+        const userId = req.params.id;
+        const response = await(userDao.findUserById(userId));
+        res.send(response);
+    } catch (e) {
+        console.log("Exception thrown during getUserById");
+    }
 }
 
 const getUserBySteamId = async (req,res) => {
-    const steamId = req.params.id;
-    console.log(steamId);
-    const response = await(userDao.findUserBySteamId(parseInt(steamId)));
-    console.log(response);
-    res.send(response);
+    try {
+        const steamId = req.params.id;
+        const response = await(userDao.findUserBySteamId(parseInt(steamId)));
+        res.send(response);
+    } catch (e) {
+        console.log("Exception thrown during getUserBySteamId");
+    }
 }
 
 const getAllUsers = async(req,res) => {
-    const response = await(userDao.findAllUsers());
-    res.send(response);
+    try{
+        const response = await(userDao.findAllUsers());
+        res.send(response);
+    } catch (e) {
+        console.log("Exeption thrown during find all users.")
+    }
 }
 
 const signup = async (req, res) => {
-    const user = req.body;
-    const email = user.PersonalInfo.Email;
-    const existingUser = await userDao.findUserByEmail(email)
-    if(existingUser) {
-        //user already exists
-        return res.sendStatus(403)
-    } else {
-        const newUser = await userDao.createUser(user)
-        req.session['user'] = newUser
-        res.json(newUser)
+    try {
+        const user = req.body;
+        const email = user.PersonalInfo.Email;
+        const existingUser = await userDao.findUserByEmail(email)
+        if(existingUser) {
+            //user already exists
+            return res.sendStatus(403)
+        } else {
+            const newUser = await userDao.createUser(user)
+            req.session['user'] = newUser
+            res.json(newUser)
+        }
+    } catch (e) {
+        console.log("Exception thrown during signup.");
     }
+
 }
 
 const login = async (req, res) => {
@@ -81,8 +94,6 @@ const login = async (req, res) => {
     try{
         if (profile) {
             req.session['user'] = profile;
-            console.log("Sending Profile data");
-            console.log(profile);
             res.json(profile);
             return;
         }
@@ -93,17 +104,29 @@ const login = async (req, res) => {
 }
 
 const profile = (req, res) => {
-    const user = req.session['user']
-    if(user) {
-        res.json(user)
-    } else {
-        res.sendStatus(503)
+    try{
+        const user = req.session['user']
+        if(user) {
+            console.log("Sending logged in profile data");
+            res.send(user)
+        } else {
+            console.log("Logged in profile data not found.")
+            res.sendStatus(503)
+        }
+    } catch (e) {
+        console.log("Exception thrown sending profile data.")
     }
+
+
 }
 
 const logout = (req, res) => {
-    req.session.destroy();
-    res.sendStatus(200);
+    try{
+        req.session.destroy();
+        res.sendStatus(200);
+    } catch (e) {
+        console.log("Error destroying session");
+    }
 }
 
 export default userController;
