@@ -1,12 +1,13 @@
 import axios from 'axios';
 import * as userDao from "../database/daos/UserDao.js";
+import * as steamService from './steam-controller.js'
 
 const userController = (app) => {
     app.get('/api/steamcollector/getAllUsers', (req,res) => {
         getAllUsers(req,res);
     })
 
-    app.get('/api/steamcollector/getUser/:id', (req,res) => {
+    app.get('/api/steamcollector/getUser/:uniqueId', (req,res) => {
         getUserById(req,res);
     })
 
@@ -33,12 +34,13 @@ const userController = (app) => {
 }
 
 const getUserById = async (req,res) => {
+    const uniqueId = req.params.uniqueId;
+    let user = {};
     try{
-        const userId = req.params.id;
-        const response = await(userDao.findUserById(userId));
-        res.send(response);
+        user = await steamService.updateUserGameArray(uniqueId);
+        res.send(user);
     } catch (e) {
-        console.log("Exception thrown during getUserById");
+        console.log(e);
     }
 }
 
@@ -77,7 +79,6 @@ const signup = async (req, res) => {
     } catch (e) {
         console.log("Exception thrown during signup.");
     }
-
 }
 
 const login = async (req, res) => {

@@ -1,4 +1,5 @@
 import userModel from '../models/UserModel.js';
+import mongoose from "mongoose";
 
 export const findAllUsers = async () => {
     return userModel.find();
@@ -27,4 +28,18 @@ export const createUser = async (user) => {
 
 export const deleteUser = (userId) => userModel.deleteOne({_id: userId});
 
-export const updateUser = (userId, user) => userModel.updateOne({_id: userId}, {$set: user});
+export const updateOwnedApps = async (id, user) => {
+    const doc = await userModel.findById(id);
+    doc.OwnedApps = user.OwnedApps;
+    await doc.save();
+    return doc;
+}
+
+export const recommendApp = async(userId, appId) => {
+    const user = userModel.findById(userId);
+    if(!user.RecommendedApps.includes(appId)){
+        user.RecommendedApps.push(appId);
+    }
+    await user.save();
+    return user;
+}

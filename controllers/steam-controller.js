@@ -18,7 +18,7 @@ const KEY_SUFFIX = "?key=" + STEAM_API_KEY + "&format=json&";
 const MY_ID = "76561197978497049";
 
 const steamController = (app) => {
-   app.get('/api/steam/getUserInfo/:steamId', (req, res) => {
+   app.get('/api/steam/getUserInfo/:uniqueId', (req, res) => {
       getUserInfo(req,res);
    });
    app.get('/api/steam/getOwnedGames/:steamId', (req,res) => {
@@ -33,21 +33,46 @@ const steamController = (app) => {
    app.get('/api/steam/getAppInfo/:appId', (req,res) => {
       getAppInfo(req,res);
    })
+   app.post('/api/steam/recommendApp'), (req,res) => {
+      recommendApp(req,res);
+   }
 };
 
-
-const getUserInfo = async (req,res) => {
-   const steamId = req.params.steamId;
-   if(steamId){
-      const responseFromSteam = await(axios.get(STEAM_URL + USERS + "GetPlayerSummaries/v002/" + KEY_SUFFIX + "steamids=" + steamId));
-      const responseFromDb = await(userDao.findUserBySteamId(parseInt(steamId)));
-      const response = {
-         "steam" : responseFromSteam.data.response,
-         "db" : responseFromDb
-      }
-      console.log(response);
-      res.send(response);
+export const updateUserGameArray = async (id) => {
+   console.log(id);
+   let responseFromDb = await(userDao.findUserById(id));
+   if(!responseFromDb) {
+      console.log("User not found in database");
+      return {};
    }
+   try {
+      const responseFromSteam = await(axios.get(STEAM_URL + "IPlayerService/GetOwnedGames/v1/" + KEY_SUFFIX + "steamid=" + responseFromDb.SteamId + "&include_appinfo=true"));
+      const gameObjectList = responseFromSteam.data.response.games;
+      let gamesArray = gameObjectList.map(g => g.appid);
+      responseFromDb.OwnedApps = gamesArray;
+      responseFromDb = await userDao.updateUser(uniqueId, responseFromDb);
+      return responseFromDb;
+   } catch (e) {
+      console.log("Error getting data using SteamId, probably an invalid SteamID was provided.");
+      return responseFromDb;
+   }
+}
+//This gets detailed profile data from steam:
+//const responseFromSteam = await(axios.get(STEAM_URL + USERS + "GetPlayerSummaries/v002/" + KEY_SUFFIX + "steamids=" + responseFromDb.SteamId));
+//console.log(responseFromSteam.data.response.players[0]);
+export const getUserInfo = async (req,res) => {
+   //the unique ID of the user in our database.
+   const uniqueId = req.params.uniqueId;
+   let responseFromDb = await(userDao.findUserById(uniqueId));
+   if(!responseFromDb){ //if the user is not in our database, return.
+      res.sendStatus(404);
+      return;
+   }
+
+   if(responseFromDb.SteamId){
+      responseFromDb = updateUserGameArray(uniqueId);
+   }
+   res.send(responseFromDb);
 }
 
 const getOwnedGames = async(req,res) => {
@@ -102,7 +127,6 @@ const getAppInfo = async(req,res) => {
       "Price" : "",
    }
    const responseFromSteam = await(axios.get("https://store.steampowered.com/api/appdetails?appids=" + appId));
-   console.log(responseFromSteam.data[appId]["data"]["name"]);
    if(responseFromSteam){
       try{
          response.AppTitle = responseFromSteam.data[appId]["data"]["name"];
@@ -114,6 +138,32 @@ const getAppInfo = async(req,res) => {
 
    response = await appDao.createApp(response);
    res.send(response);
+}
+
+const recommendApp = async(req,res) => {
+   let userId = "";
+   let appId = "";
+   try{
+      userId = req.body.userId;
+      appId = req.body.appId;
+   } catch (e) {
+      console.log("error getting app info from post body.")
+   }
+
+   let app = {};
+   let user = {};
+   try{
+      app = await appDao.recommendApp(userId, appId);
+   } catch(e) {
+      console.log("Error recommending app.");
+   }
+
+   try {
+      user = await userDao.recommendApp(userId, appId);
+   } catch(e) {
+      console.log("Error updating user with recommended app.");
+   }
+   res.send(app);
 }
 
 export default steamController;

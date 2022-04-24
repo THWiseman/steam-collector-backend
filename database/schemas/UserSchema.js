@@ -4,7 +4,7 @@ import {PersonalInfoSchema} from "./PersonalInfoSchema.js";
 
 export const UserSchema = new Schema ({
         UserName : {type: String, required: true},
-        SteamId : {type: Number},
+        SteamId : {type: String},
         UserType: {type: String, default: "User"},
         FollowedCurators : {type: [Number]},
         Followers : {type: [Number]},
