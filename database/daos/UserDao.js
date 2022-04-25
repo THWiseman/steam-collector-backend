@@ -7,7 +7,6 @@ export const findAllUsers = async () => {
 }
 
 export const findUserById = async (id) => {
-    console.log(id);
     return userModel.findById(id);
 }
 
@@ -44,10 +43,21 @@ export const getAllCurators = async () => {
 
 export const recommendApp = async(userId, appId) => {
     let user = await userModel.findById(userId);
-    console.log(userId);
-    console.log(user);
     user["RecommendedApps"].push(appId);
     user = await user.save();
-    console.log(user);
+    return user;
+}
+
+export const saveCollection = async(userId, collectionId) => {
+    let user = await userModel.findById(userId);
+    user["SavedCollections"].push(collectionId);
+    user = await user.save();
+    return user;
+}
+
+export const createCollection = async(userId, collectionId) => {
+    let user = await userModel.findById(userId);
+    user["CreatedCollections"].push(collectionId);
+    user = await user.save();
     return user;
 }

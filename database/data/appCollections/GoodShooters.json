@@ -1,9 +1,8 @@
 {
-  "_id" : 1,
   "Title" : "Good Shooters",
-  "Creator" : 1,
+  "Creator" : "626440445e50757eb8877433",
   "CreatorName" : "CustomizedHobo",
   "Apps" : [1613450,1695794,1695791,976730,1240440],
-  "Followers" : [3,4],
+  "Followers" : ["626440315e50757eb8877432","62649f96cc74b96f926f9b3a","62649b2bcc74b96f926f9b2d"],
   "AnonymousRecommendations" : 1004
 }

@@ -1,7 +1,7 @@
 import cors from 'cors';
-import helloWorldController from './controllers/helloworld-controller.js';
 import steamController from './controllers/steam-controller.js';
 import userController from './controllers/user-controller.js';
+import collectionController from './controllers/collection-controller.js'
 import mongoose from 'mongoose'
 import express from 'express'
 import session from 'express-session'
@@ -31,6 +31,7 @@ app.use(session(
 
 userController(app);
 steamController(app);
+collectionController(app);
 
-app.get('/', (req, res) => {res.send('Welcome to the hobo server!')})
+app.get('/', (req, res) => {res.send('Welcome to the Steam Collector!')});
 app.listen(4000);

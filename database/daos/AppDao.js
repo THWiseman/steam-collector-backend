@@ -8,7 +8,6 @@ export const createApp = (app) => {
 export const recommendApp = async (userId, appId) => {
     let app = await appModel.findOne({AppId : appId});
     app["RecommendedBy"].push(userId);
-    console.log(app);
     app = await app.save();
     return app;
 }
