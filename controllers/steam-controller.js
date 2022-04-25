@@ -18,6 +18,12 @@ const KEY_SUFFIX = "?key=" + STEAM_API_KEY + "&format=json&";
 const MY_ID = "76561197978497049";
 
 const steamController = (app) => {
+
+   app.post('/api/steam/recommendApp/', (req,res) => {
+      console.log("recommend");
+      recommendApp(req,res);
+   })
+
    app.get('/api/steam/getUserInfo/:uniqueId', (req, res) => {
       getUserInfo(req,res);
    });
@@ -33,9 +39,6 @@ const steamController = (app) => {
    app.get('/api/steam/getAppInfo/:appId', (req,res) => {
       getAppInfo(req,res);
    })
-   app.post('/api/steam/recommendApp'), (req,res) => {
-      recommendApp(req,res);
-   }
 };
 
 export const updateUserGameArray = async (id) => {
@@ -143,6 +146,7 @@ const getAppInfo = async(req,res) => {
 const recommendApp = async(req,res) => {
    let userId = "";
    let appId = "";
+   console.log(req.body);
    try{
       userId = req.body.userId;
       appId = req.body.appId;
@@ -160,6 +164,7 @@ const recommendApp = async(req,res) => {
 
    try {
       user = await userDao.recommendApp(userId, appId);
+      req.session['user'] = user;
    } catch(e) {
       console.log("Error updating user with recommended app.");
    }

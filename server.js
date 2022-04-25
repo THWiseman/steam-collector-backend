@@ -29,9 +29,7 @@ app.use(session(
     }
 ))
 
-
 userController(app);
-helloWorldController(app);
 steamController(app);
 
 app.get('/', (req, res) => {res.send('Welcome to the hobo server!')})

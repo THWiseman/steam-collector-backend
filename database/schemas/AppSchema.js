@@ -3,9 +3,9 @@ const { Schema } = mongoose;
 
 export const AppSchema = new Schema ({
     AppId : {type: Number, required: true},
-    AppCollections : {type: [Number]},
-    OwnedBy : {type: [Number]},
-    RecommendedBy : {type: [Number]},
+    AppCollections : {type: [String]},
+    OwnedBy : {type: [String]},
+    RecommendedBy : {type: [String]},
     AnonymousRecommendations: {type: Number},
     AppTitle : {type: String},
     Price : {type : String}

@@ -6,11 +6,10 @@ export const createApp = (app) => {
     return app;
 }
 export const recommendApp = async (userId, appId) => {
-    const app = await appModel.findOne({AppId : appId});
-    if(!app.RecommendedBy.includes(userId)){
-        app.RecommendedBy.push(userId);
-    }
-    await app.save();
+    let app = await appModel.findOne({AppId : appId});
+    app["RecommendedBy"].push(userId);
+    console.log(app);
+    app = await app.save();
     return app;
 }
 export const deleteApp = (appId) => appModel.deleteOne({_id: appId});

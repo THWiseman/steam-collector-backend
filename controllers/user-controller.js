@@ -15,6 +15,10 @@ const userController = (app) => {
         getUserBySteamId(req,res);
     })
 
+    app.get('/api/steamcollector/curators', (req,res) => {
+        getAllCurators(req,res);
+    })
+
     app.post('/api/steamcollector/signup', (req,res) => {
         signup(req,res);
     })
@@ -117,8 +121,6 @@ const profile = (req, res) => {
     } catch (e) {
         console.log("Exception thrown sending profile data.")
     }
-
-
 }
 
 const logout = (req, res) => {
@@ -127,6 +129,15 @@ const logout = (req, res) => {
         res.sendStatus(200);
     } catch (e) {
         console.log("Error destroying session");
+    }
+}
+
+const getAllCurators = async (req,res) => {
+    try {
+        const curatorArray = await userDao.getAllCurators();
+        res.send(curatorArray);
+    } catch (e) {
+        console.log("Error fetching curators.")
     }
 }
 

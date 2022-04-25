@@ -1,5 +1,6 @@
 import userModel from '../models/UserModel.js';
 import mongoose from "mongoose";
+import appModel from "../models/AppModel.js";
 
 export const findAllUsers = async () => {
     return userModel.find();
@@ -35,11 +36,18 @@ export const updateOwnedApps = async (id, user) => {
     return doc;
 }
 
+export const getAllCurators = async () => {
+    const curators = await userModel.find({UserType : "Curator"});
+    console.log(curators);
+    return curators;
+}
+
 export const recommendApp = async(userId, appId) => {
-    const user = userModel.findById(userId);
-    if(!user.RecommendedApps.includes(appId)){
-        user.RecommendedApps.push(appId);
-    }
-    await user.save();
+    let user = await userModel.findById(userId);
+    console.log(userId);
+    console.log(user);
+    user["RecommendedApps"].push(appId);
+    user = await user.save();
+    console.log(user);
     return user;
 }
