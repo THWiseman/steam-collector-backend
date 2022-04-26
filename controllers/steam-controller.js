@@ -38,12 +38,15 @@ const steamController = (app) => {
    });
    app.get('/api/steam/getAppInfo/:appId', (req,res) => {
       getAppInfo(req,res);
-   })
+   });
+   app.get('/api/steam/getBasicAppInfo/:appId', (req,res) => {
+      getBasicAppInfo(req,res);
+   });
 };
 
 export const updateUserGameArray = async (id) => {
    console.log(id);
-   let responseFromDb = await(userDao.findUserById(id));
+   let responseFromDb = await(userDao.findUserById(id.toString()));
    if(!responseFromDb) {
       console.log("User not found in database");
       return {};
@@ -88,6 +91,7 @@ const getAllApps = async(req,res) => {
    const URL = STEAM_URL + "ISteamApps/GetAppList/v2/"
    const response = await(axios.get(URL));
    const allApps = response.data.applist.apps;
+   //const apps = await appDao.insertAllApps(allApps);
    res.send(allApps);
 }
 
@@ -101,45 +105,44 @@ const getAppsByName = async(req,res) => {
    res.send(filteredApps);
 }
 
+const getBasicAppInfo = async(req,res) => {
+   const appId = req.params.appId;
+   let response = await(appDao.findAppByAppId(appId));
+   res.send(response);
+}
 const getAppInfo = async(req,res) => {
-
    //Parse App ID from URL
    const appId = req.params.appId;
-
-   //Check if in database already.
-   const responseFromDb = await(appDao.findAppByAppId(appId));
-
-   //If it is, send it to the caller and return.
-   if(responseFromDb){
-      try {
-         res.send(responseFromDb);
-         return;
-      } catch (e) {
-         console.log("Error getting game data from database.");
-      }
-   }
+   let response = await(appDao.findAppByAppId(appId));
 
    //If It's not, create a default object, populate it with some data from steam, store a copy in our db, and send a copy to the caller.
-   let response = {
-      "AppId" : appId,
-      "AppCollections" : [],
-      "OwnedBy" : [],
-      "RecommendedBy" : [],
-      "AnonymousRecommendations" : 0,
-      "AppTitle" : "",
-      "Price" : "",
+   let responseFromSteam = false;
+   try{
+      responseFromSteam = await(axios.get("https://store.steampowered.com/api/appdetails?appids=" + appId));
+   } catch (e) {
+      console.log("Steam failed to reply with data.");
    }
-   const responseFromSteam = await(axios.get("https://store.steampowered.com/api/appdetails?appids=" + appId));
+
    if(responseFromSteam){
       try{
-         response.AppTitle = responseFromSteam.data[appId]["data"]["name"];
          response.Price = responseFromSteam.data[appId]["data"]["price_overview"]["final_formatted"];
       } catch (e) {
          console.log("Error getting game data from steam");
       }
    }
 
-   response = await appDao.createApp(response);
+   try{
+      const collectionsThatHaveApp =  await collectionDao.findCollectionsThatContainApp(appId);
+      const usersThatOwnApp = await userDao.findUsersThatOwnApp(appId);
+      const usersThatRecommendApp = await userDao.findUsersThatRecommendApp(appId);
+      response.AppCollections = collectionsThatHaveApp;
+      response.OwnedBy = usersThatOwnApp;
+      response.RecommendedBy = usersThatRecommendApp;
+   } catch (e) {
+      console.log("Data enrichment failed.");
+   }
+
+   response = await appDao.updateApp(response);
    res.send(response);
 }
 

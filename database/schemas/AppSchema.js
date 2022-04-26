@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 const { Schema } = mongoose;
 
 export const AppSchema = new Schema ({
-    AppId : {type: Number, required: true},
+    AppId : {type: Number},
     AppCollections : {type: [String]},
     OwnedBy : {type: [String]},
     RecommendedBy : {type: [String]},

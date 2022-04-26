@@ -61,3 +61,17 @@ export const createCollection = async(userId, collectionId) => {
     user = await user.save();
     return user;
 }
+
+export const findUsersThatOwnApp = async(appId) => {
+    const users = await userModel.find({OwnedApps:parseInt(appId)},{_id: 1});
+    const strings = [];
+    users.map(u => strings.push(u._id.toString()));
+    return strings;
+}
+
+export const findUsersThatRecommendApp = async(appId) => {
+    const users = await userModel.find({RecommendedApps:parseInt(appId)},{_id: 1});
+    const strings = [];
+    users.map(u => strings.push(u._id.toString()));
+    return strings;
+}

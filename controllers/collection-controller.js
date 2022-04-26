@@ -30,6 +30,10 @@ const collectionController = (app) => {
     app.post('/api/steamcollector/collection/create', (req,res) => {
         createCollection(req,res);
     })
+
+    app.post('/api/steamcollector/collection/addApp', (req,res) => {
+        addAppToCollection(req,res);
+    })
 }
 
 const getAllCollections = async(req,res) => {
@@ -96,5 +100,18 @@ const getCollectionTitle = async(req,res) => {
     } catch (e){
         console.log("Error retrieving collection title");
     }
+}
+
+const addAppToCollection = async(req,res) => {
+    const appId = req.body.appId;
+    const collectionId = req.body.collectionId;
+    try{
+        const collection = await collectionDao.addAppToCollection(appId,collectionId);
+        res.send(collection);
+    } catch (e) {
+        console.log("Error adding game to collection");
+        res.sendStatus(500);
+    }
+
 }
 export default collectionController;

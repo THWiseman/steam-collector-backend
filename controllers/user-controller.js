@@ -63,7 +63,7 @@ const getAllUsers = async(req,res) => {
         const response = await(userDao.findAllUsers());
         res.send(response);
     } catch (e) {
-        console.log("Exeption thrown during find all users.")
+        console.log("Exception thrown during find all users.")
     }
 }
 
