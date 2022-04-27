@@ -108,9 +108,10 @@ const login = async (req, res) => {
     res.sendStatus(403);
 }
 
-const profile = (req, res) => {
+const profile = async (req, res) => {
     try{
-        const user = req.session['user']
+        let user = req.session['user']
+        user = await userDao.findUserById(user._id);
         if(user) {
             console.log("Sending logged in profile data");
             res.send(user)
