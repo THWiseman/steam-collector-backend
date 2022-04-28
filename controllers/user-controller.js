@@ -11,12 +11,20 @@ const userController = (app) => {
         getUserById(req,res);
     })
 
+    app.post('/api/steamcollector/user', (req,res) => {
+        updateUserPersonalInfo(req,res);
+    })
+
     app.get('/api/steamcollector/getUserSteam/:id', (req,res) => {
         getUserBySteamId(req,res);
     })
 
     app.get('/api/steamcollector/curators', (req,res) => {
         getAllCurators(req,res);
+    })
+
+    app.put('/api/steamcollector/follow', (req,res) => {
+        followCurator(req,res);
     })
 
     app.post('/api/steamcollector/signup', (req,res) => {
@@ -34,6 +42,32 @@ const userController = (app) => {
     app.post('/api/steamcollector/logout', (req,res) => {
         logout(req,res);
     })
+
+}
+
+const followCurator = async (req,res) => {
+    try{
+        const body = req.body;
+        const followerId = body.follower;
+        const curatorId = body.followedCurator;
+        const followerObject = await userDao.followCurator(followerId, curatorId);
+        res.send(followerObject);
+    } catch (e) {
+        console.log("Following user failed.");
+    }
+
+}
+
+const updateUserPersonalInfo = async (req,res) => {
+    const user = req.body;
+    try{
+        console.log("Updating User:" , user);
+        const response = await userDao.updateUserPersonalInfo(user);
+        res.send(response);
+    }
+    catch (e) {
+        console.log("Error updating user: ", user);
+    }
 
 }
 

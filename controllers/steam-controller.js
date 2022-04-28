@@ -20,7 +20,6 @@ const MY_ID = "76561197978497049";
 const steamController = (app) => {
 
    app.post('/api/steam/recommendApp/', (req,res) => {
-      console.log("recommend");
       recommendApp(req,res);
    })
 
@@ -57,7 +56,7 @@ export const updateUserGameArray = async (id) => {
    try {
       const responseFromSteam = await(axios.get(STEAM_URL + "IPlayerService/GetOwnedGames/v1/" + KEY_SUFFIX + "steamid=" + responseFromDb.SteamId + "&include_appinfo=true"));
       const gameObjectList = responseFromSteam.data.response.games;
-
+      console.log(gameObjectList);
       let gamesArray = gameObjectList.map(g => g.appid);
       responseFromDb.OwnedApps = gamesArray;
       responseFromDb = await userDao.updateUser(uniqueId, responseFromDb);

@@ -37,9 +37,13 @@ export const addAppToCollection = async (appId,collectionId) => {
 }
 
 export const findCollectionsThatContainApp = async(appId) => {
-    const collections = await appCollectionModel.find({apps:parseInt(appId)}).select("_id");
+    const collections = await appCollectionModel.find();
     const strings = [];
-    collections.map(c => strings.push(c._id.toString()));
+    for(let i = 0; i < collections.length; i++){
+        if(collections[i].Apps.includes(parseInt(appId))){
+            strings.push(collections[i]._id.toString());
+        }
+    }
     return strings;
 }
 

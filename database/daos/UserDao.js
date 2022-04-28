@@ -62,6 +62,35 @@ export const createCollection = async(userId, collectionId) => {
     return user;
 }
 
+export const updateUserPersonalInfo = async(user) => {
+    let dbuser = await userModel.findById(user._id);
+    dbuser.UserType = user.UserType;
+    dbuser.PersonalInfo = user.PersonalInfo;
+    dbuser = await dbuser.save();
+    return dbuser;
+}
+
+export const followCurator = async (followerId, curatorId) => {
+    let follower = {};
+    try{
+        follower = await userModel.findById(followerId.toString());
+        follower.FollowedCurators.push(curatorId);
+        follower = follower.save();
+    } catch (e) {
+        console.log("Failed to find follower by ID");
+    }
+
+    try {
+        const followedCurator = await userModel.findById(curatorId.toString());
+        followedCurator.Followers.push(followerId);
+        followedCurator.save();
+    } catch (e) {
+        console.log("Failed to find followed curator by ID");
+    }
+
+    return follower;
+}
+
 export const findUsersThatOwnApp = async(appId) => {
     const users = await userModel.find({OwnedApps:parseInt(appId)},{_id: 1});
     const strings = [];
