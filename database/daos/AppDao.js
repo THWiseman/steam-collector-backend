@@ -32,7 +32,6 @@ export const insertAllApps = async (appArray) => {
     }
 
     const inserted = await appModel.insertMany(newArray);
-    console.log(inserted);
     return inserted;
 }
 

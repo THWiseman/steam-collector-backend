@@ -56,10 +56,8 @@ export const updateUserGameArray = async (id) => {
    try {
       const responseFromSteam = await(axios.get(STEAM_URL + "IPlayerService/GetOwnedGames/v1/" + KEY_SUFFIX + "steamid=" + responseFromDb.SteamId + "&include_appinfo=true"));
       const gameObjectList = responseFromSteam.data.response.games;
-      console.log(gameObjectList);
       let gamesArray = gameObjectList.map(g => g.appid);
-      responseFromDb.OwnedApps = gamesArray;
-      responseFromDb = await userDao.updateUser(uniqueId, responseFromDb);
+      responseFromDb = await userDao.updateOwnedApps(id, gamesArray);
       return responseFromDb;
    } catch (e) {
       console.log("Error getting data using SteamId, probably an invalid SteamID was provided.");
@@ -74,11 +72,13 @@ export const getUserInfo = async (req,res) => {
    const uniqueId = req.params.uniqueId;
    let responseFromDb = await(userDao.findUserById(uniqueId));
    if(!responseFromDb){ //if the user is not in our database, return.
+      console.log("User ID not found in database.")
       res.sendStatus(404);
       return;
    }
 
    if(responseFromDb.SteamId){
+      console.log("Updating games that the user owns.")
       responseFromDb = updateUserGameArray(uniqueId);
    }
    res.send(responseFromDb);
@@ -171,7 +171,6 @@ const getAppInfo = async(req,res) => {
 const recommendApp = async(req,res) => {
    let userId = "";
    let appId = "";
-   console.log(req.body);
    try{
       userId = req.body.userId;
       appId = req.body.appId;

@@ -145,6 +145,7 @@ const login = async (req, res) => {
 const profile = async (req, res) => {
     try{
         let user = req.session['user']
+        await steamService.updateUserGameArray(user._id);
         user = await userDao.findUserById(user._id);
         if(user) {
             console.log("Sending logged in profile data");

@@ -28,16 +28,15 @@ export const createUser = async (user) => {
 
 export const deleteUser = (userId) => userModel.deleteOne({_id: userId});
 
-export const updateOwnedApps = async (id, user) => {
-    const doc = await userModel.findById(id);
-    doc.OwnedApps = user.OwnedApps;
-    await doc.save();
+export const updateOwnedApps = async (userId, gamesArray) => {
+    let doc = await userModel.findById(userId.toString());
+    doc.OwnedApps = gamesArray;
+    doc = await doc.save();
     return doc;
 }
 
 export const getAllCurators = async () => {
     const curators = await userModel.find({UserType : "Curator"});
-    console.log(curators);
     return curators;
 }
 
