@@ -47,7 +47,6 @@ const steamController = (app) => {
 };
 
 export const updateUserGameArray = async (id) => {
-   console.log(id);
    let responseFromDb = await(userDao.findUserById(id.toString()));
    if(!responseFromDb) {
       console.log("User not found in database");

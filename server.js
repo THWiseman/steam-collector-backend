@@ -8,8 +8,8 @@ import session from 'express-session'
 import MongoStore from 'connect-mongo'
 
 const CONNECTION_STRING = process.env.DB_CONNECTION_STRING;
-
 mongoose.connect(CONNECTION_STRING);
+
 const app = express();
 app.use(express.json());
 app.use(cors({
@@ -34,4 +34,4 @@ steamController(app);
 collectionController(app);
 
 app.get('/', (req, res) => {res.send('Welcome to the Steam Collector!')});
-app.listen(4000);
+app.listen(process.env.PORT || 4000);
